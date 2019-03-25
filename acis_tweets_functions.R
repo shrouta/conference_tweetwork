@@ -72,6 +72,38 @@ classify_ACIS_tweeters <- function(connections_df) {
   return(ACIS_profiles)
 }
 
+build_ACIS_network <- function(conference_profiles, conference_connections, account_to_drop) {
+  # Call in twitter connections data and merge connections and profiles
+  conf_edge_list <- merge(conference_connections, conference_profiles, by.x = "person_mentioned", by.y = "screenName", all.x = TRUE)
+  useful_EL_metadata_1 <- c("person_tweeting", "person_mentioned", "field", "tweet_ID")
+  conf_edge_list <- conf_edge_list[useful_EL_metadata_1]
+  names(conf_edge_list) <- c("person_tweeting", "person_mentioned", "mentioned_field", "tweet_ID")
+  
+  conf_edge_list <- merge(conf_edge_list, conference_profiles, by.x = "person_tweeting", by.y = "screenName", all.x = TRUE)
+  useful_EL_metadata_2 <- c("person_tweeting", "field", "person_mentioned", "mentioned_field", "tweet_ID")
+  conf_edge_list <- conf_edge_list[useful_EL_metadata_2]
+  names(conf_edge_list) <- c("person_tweeting", "tweeting_field", "person_mentioned", "mentioned_field", "tweet_ID")
+  
+  # Drops conference hashtag, if necessary
+  if(account_to_drop != "") {
+    conf_edge_list <- conf_edge_list[which(conf_edge_list$person_tweeting != account_to_drop), ]
+    conf_edge_list <- conf_edge_list[which(conf_edge_list$person_mentioned != account_to_drop), ]
+  }
+  
+  # Limits edge list to tweeter and mentioned
+  sparse_metadata <-c("person_tweeting", "person_mentioned") 
+  sparse_conf_edge_list <- conf_edge_list[sparse_metadata]
+  
+  # Creates an adjacency matrix
+  conf_graph_df <- graph.data.frame(sparse_conf_edge_list)
+  conf_adjacency <- get.adjacency(conf_graph_df, sparse = FALSE)
+  diag(conf_adjacency) <- NA
+  
+  # Creates a graph adjacency object
+  conf_graph <- graph.adjacency(conf_adjacency, mode = "undirected", weighted = NULL, diag = FALSE)
+  return(conf_graph)
+}
+
 visualize_ACIS_by_field <- function(graph_object, conference_profiles, file_name, graph_title, sub_title) {
   # Converts profile info to factors
   conference_profiles$field <- as.factor(conference_profiles$field)
