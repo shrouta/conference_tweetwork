@@ -2,6 +2,7 @@
 A series of functions that call and visualize conference tweets.
 
 **setup.R** sets twitter API keys, as well as conference hashtags and dates.
+
 **conference_tweets_functions.R** contains generic functions that pull and visualize conference tweets.
 
 
