@@ -10,10 +10,10 @@ package.check <- lapply(packages, FUN = function(x) {
 })
 
 # Specify keys
-consumer_key <- "gW3ZSOIpUAHprPHsKMyMC7HL6"
-consumer_secret <- "e9AEb4nIoW5DTKKVFPtkuvwIj3L3jgF6Lj4U2mVj3sP1gCHCSF"
-access_token <- "1142871446-1dGZaoBNObXQaFV27mJuBFqARMLiewH5v0U1r9U"
-access_secret <- "1nJLJCqUze3Ax003NuipIEwBqG80st60GToZLQ3Hot8ZM"
+consumer_key <- ""
+consumer_secret <- ""
+access_token <- ""
+access_secret <- ""
 
 # Initialize twitter API
 setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
